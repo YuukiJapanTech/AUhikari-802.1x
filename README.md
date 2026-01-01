@@ -54,8 +54,28 @@ Mode: App Normal
 In another project, **[CA8271x](https://github.com/YuukiJapanTech/CA8271x)** analysis of the _Ateam BL3000HM—an integrated ONU + HGW device—revealed_ an interesting ELF file with supplicant in its name.
 (The BL3000HM uses an AES-encrypted rootfs. Methods for obtaining the rootfs and shell access are not disclosed here.)
 ```
-make_8021x_wired_conf
-which make_8021x_wired_conf
+root@ATERM-001122:~# m
+mail-lock              mke2fs.e2fsprogs       mlg
+mail-touchlock         mkexfatfs              modinfo
+mail-unlock            mkfifo                 modprobe
+make_8021x_wired_conf  mkfs                   more
+mcookie                mkfs.cramfs            more.util-linux
+md5sum                 mkfs.exfat             mount
+mdio-read              mkfs.ext2              mount.util-linux
+mdio-read-iros         mkfs.ext2.e2fsprogs    mount_root
+mdio-write             mkfs.ext3              mountpoint
+mdio-write-iros        mkfs.ext4              mountpoint.util-linux
+memtester              mkfs.ubifs             mpicalc
+mesg                   mkfwbin                mpstat
+mesg.util-linux        mklost+found           mtd_debug
+microcom               mknod                  mtd_name2dev.sh
+mii-tool               mkpasswd               mtdinfo
+mii-tool.net-tools     mkswap                 mtdpart
+mkdir                  mkswap.util-linux      mv
+mke2fs                 mktemp
+root@ATERM-001122:~# which make_8021x_wired_conf
+/usr/bin/make_8021x_wired_conf
+root@ATERM-001122:~#
 ```
 Although the filename includes `wpa`, it is labeled as a wired supplicant, clearly suggesting 802.1x functionality.
 When this ELF file was executed, it generated a configuration file named `wpa_supplicant_wired.conf` under `/etc/`.
