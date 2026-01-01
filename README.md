@@ -6,6 +6,8 @@ This project analyzes the 802.1x authentication credentials used by au Hikari HG
 > * This content is maintained by reverse engineering by enthusiasts.
 > * If ISP service is suspended due to 3rd party system connected, you may be subject to punishment under the laws of your country.
 > * The creator of this content assumes no responsibility for any problems that may arise from this content.
+> 
+> This report has been created for the purpose of personal analysis and research and cannot be used for any other purposes.
 
 # Background
 ## KDDI au Hikari Home
@@ -55,24 +57,8 @@ In another project, **[CA8271x](https://github.com/YuukiJapanTech/CA8271x)** ana
 (The BL3000HM uses an AES-encrypted rootfs. Methods for obtaining the rootfs and shell access are not disclosed here.)
 ```
 root@ATERM-001122:~# m
-mail-lock              mke2fs.e2fsprogs       mlg
-mail-touchlock         mkexfatfs              modinfo
-mail-unlock            mkfifo                 modprobe
-make_8021x_wired_conf  mkfs                   more
-mcookie                mkfs.cramfs            more.util-linux
-md5sum                 mkfs.exfat             mount
-mdio-read              mkfs.ext2              mount.util-linux
-mdio-read-iros         mkfs.ext2.e2fsprogs    mount_root
-mdio-write             mkfs.ext3              mountpoint
-mdio-write-iros        mkfs.ext4              mountpoint.util-linux
-memtester              mkfs.ubifs             mpicalc
-mesg                   mkfwbin                mpstat
-mesg.util-linux        mklost+found           mtd_debug
-microcom               mknod                  mtd_name2dev.sh
-mii-tool               mkpasswd               mtdinfo
-mii-tool.net-tools     mkswap                 mtdpart
-mkdir                  mkswap.util-linux      mv
-mke2fs                 mktemp
+make_8021x_wired_conf
+
 root@ATERM-001122:~# which make_8021x_wired_conf
 /usr/bin/make_8021x_wired_conf
 root@ATERM-001122:~#
@@ -90,7 +76,7 @@ network={
      key_mgmt=IEEE8021X
      eap=MD5
      identity="H03HGxxxxxxx"
-     password="1de37849e1abe1f"
+     password="1de3xxxxxxxx"
 }
 ```
 Since the only wired interface on the HGW that performs 802.1x authentication is the WAN interface, it is evident that this configuration corresponds to 802.1x authentication between the OLT and the HGW.
@@ -98,9 +84,7 @@ Since the only wired interface on the HGW that performs 802.1x authentication is
 ## Analysis of wpa_supplicant_wired.conf
 The `wpa_supplicant_wired.conf` file was extracted from the HGW and analyzed using Ghidra.
 The Ateam BL3000HM uses a CORTINA CA8289 SoC, with an AARCH64 v8A-LE (64-bit) architecture.
-Searching for references to `wpa_supplicant_wired.conf` in the analysis results revealed a single function.
-
-![Analysis of wpa_supplicant_wired.conf](/Files/ghidra.png)
+Searching for references to `wpa_supplicant_wired.conf` in the analysis results revealed [function](/Files/ghidra.png).
 
 This function performs MD5 calculation and exports `wpa_supplicant_wired.conf`, strongly indicating that it generates the 802.1x authentication credentials.
 
@@ -113,16 +97,7 @@ The HGW chassis label lists both the serial number and the WAN interface MAC add
 The relevant function appears to wrap the value obtained from `pfmg_read_main_macaddr` with the string `"HITU2%sSEIRA"`.
 ```
   pfmg_read_main_macaddr(auStack_c8);
-  lVar2 = 0xd;
-  puVar5 = auStack_c8;
-  puVar6 = auStack_c0;
-  do {
-    lVar3 = lVar2 + -2;
-    __snprintf_chk(puVar6,lVar2,1,0xffffffffffffffff,&DAT_00100eb0,*puVar5);
-    lVar2 = lVar3;
-    puVar5 = puVar5 + 1;
-    puVar6 = puVar6 + 2;
-  } while (lVar3 != 1);
+~
   __snprintf_chk(auStack_a0,0x17,1,0x17,"HITU2%sSEIRA",auStack_c0);
 ```
 After that, it calculates an MD5 hash and extracts only the last 15 characters, which are then exported to `wpa_supplicant_wired.conf` as the password.
