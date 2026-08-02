@@ -9,6 +9,9 @@ This project analyzes the 802.1x authentication credentials used by au Hikari HG
 > 
 > This report has been created for the purpose of personal analysis and research and cannot be used for any other purposes.
 
+> [!TIP]
+> 802.1x is disabled on lines associated with ONU-integrated HGWs such as BL3000HM and BL4000HM.
+
 # Background
 ## KDDI au Hikari Home
 au Hikari Home, provided by KDDI, is an FTTH service that uses optical fiber infrastructure provided by Tokyo Electric Power Company and is delivered over DPoE/CTC-based EPON.
